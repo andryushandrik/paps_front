@@ -1,3 +1,5 @@
+import { fetchActionStats, fetchFolders } from '@/http/api';
+import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { Table, Panel } from 'rsuite';
 
@@ -48,7 +50,12 @@ const { Column, HeaderCell, Cell } = Table;
 //   }
 // ];
 
-const DataTable = ({ data }) => {
+const DataTable = ({taskId}) => {
+  const { data, isFetched} = useQuery({
+    queryKey: ['adminData'+ taskId],
+    queryFn: () => fetchActionStats(taskId).then(data => data)
+  });
+  
   if(!data) return (<p>Загрузка...</p> )
 
   return (

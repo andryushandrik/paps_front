@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Dropdown,
   Popover,
@@ -7,43 +7,72 @@ import {
   Stack,
   Badge,
   Avatar,
-  IconButton,
   List,
   Button
 } from 'rsuite';
-import NoticeIcon from '@rsuite/icons/Notice';
-import GearIcon from '@rsuite/icons/Gear';
 import HelpOutlineIcon from '@rsuite/icons/HelpOutline';
-import GithubIcon from '@rsuite/icons/legacy/Github';
-import HeartIcon from '@rsuite/icons/legacy/HeartO';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/data/store';
+import { logOut } from '@/http/api';
+import { removeUser } from '@/data/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 const renderAdminSpeaker = ({ onClose, left, top, className }: any, ref) => {
+  const user = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
   const handleSelect = eventKey => {
     onClose();
     console.log(eventKey);
   };
+
+  const handleLogOut = () => {
+    logOut();
+    dispatch(removeUser());
+  };
+
   return (
     <Popover ref={ref} className={className} style={{ left, top }} full>
       <Dropdown.Menu onSelect={handleSelect}>
         <Dropdown.Item panel style={{ padding: 10, width: 160 }}>
-          <p>Signed in as</p>
-          <strong>Administrator</strong>
+          {user?.isAdmin ? (
+            <>
+              <br />
+              <strong>Администратор</strong>
+            </>
+          ) : (
+            ''
+          )}
+
+          <p>{user?.name || 'Вход не выполнен'}</p>
         </Dropdown.Item>
-        <Dropdown.Item divider />
+        {/* <Dropdown.Separator />
         <Dropdown.Item>Set status</Dropdown.Item>
         <Dropdown.Item>Profile & account</Dropdown.Item>
-        <Dropdown.Item>Feedback</Dropdown.Item>
-        <Dropdown.Item divider />
-        <Dropdown.Item>Settings</Dropdown.Item>
-        <Dropdown.Item>Sign out</Dropdown.Item>
-        <Dropdown.Item
+        <Dropdown.Item>Feedback</Dropdown.Item> */}
+        <Dropdown.Separator />
+
+        {/* <Dropdown.Item>Settings</Dropdown.Item> */}
+        {user?.isLoggedIn ? (
+          <Dropdown.Item onClick={handleLogOut}>Выйти</Dropdown.Item>
+        ) : (
+          <Dropdown.Item onClick={() => navigate('/sign-in')}>
+            <strong>Войти</strong>
+          </Dropdown.Item>
+        )}
+        {/* <Dropdown.Item
           icon={<HelpOutlineIcon />}
           href="https://rsuitejs.com"
           target="_blank"
           as="a"
         >
           Help{' '}
-        </Dropdown.Item>
+        </Dropdown.Item> */}
       </Dropdown.Menu>
     </Popover>
   );
@@ -119,7 +148,7 @@ const Header = () => {
 
   return (
     <Stack className="header" spacing={8}>
-      <IconButton
+      {/* <IconButton
         icon={<HeartIcon style={{ fontSize: 20 }} color="red" />}
         href="https://opencollective.com/rsuite"
         target="_blank"
@@ -142,7 +171,7 @@ const Header = () => {
 
       <Whisper placement="bottomEnd" trigger="click" ref={trigger} speaker={renderSettingSpeaker}>
         <IconButton icon={<GearIcon style={{ fontSize: 20 }} />} />
-      </Whisper>
+      </Whisper> */}
 
       <Whisper placement="bottomEnd" trigger="click" ref={trigger} speaker={renderAdminSpeaker}>
         <Avatar

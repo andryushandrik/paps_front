@@ -28,7 +28,6 @@ interface BarChartProps {
 }
 
 const defaultOptions = {
-  
   chart: {
     fontFamily: 'inherit',
     parentHeightOffset: 0,

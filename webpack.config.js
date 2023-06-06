@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
+var webpack = require('webpack');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlwebpackPlugin = require('html-webpack-plugin');
@@ -15,7 +16,7 @@ module.exports = {
     hot: true,
     disableHostCheck: true,
     historyApiFallback: true,
-    contentBase: path.resolve(__dirname, ''),
+    contentBase: './',
     publicPath: '/'
   },
   output: {
@@ -44,12 +45,28 @@ module.exports = {
         ]
       },
       {
-        test: /\.(less|css)$/,
+        test: /\.less$/,
         use: [
           MiniCssExtractPlugin.loader,
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+
           {
-            loader: 'css-loader'
-          },
+            loader: 'less-loader',
+            options: {
+              sourceMap: true,
+              lessOptions: {
+                javascriptEnabled: true
+              }
+            }
+          }
+        ]
+      },
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+
           {
             loader: 'less-loader',
             options: {
@@ -70,11 +87,17 @@ module.exports = {
       template: './src/index.html',
       inject: true,
       hash: true,
-      path: './'
+      path: './',
+      favicon: "./public/favicon.ico"
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
+    }),
+    new webpack.DefinePlugin({
+      // 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+      'process.env.API_URL': JSON.stringify(process.env.API_URL),
+      'process.env.API_PROD_URL': JSON.stringify(process.env.API_PROD_URL)
     })
   ]
 };

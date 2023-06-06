@@ -14,5 +14,5 @@ const plugins = [
 ];
 
 module.exports = {
-  plugins
+  plugins: { ...plugins, tailwindcss: {} }
 };
